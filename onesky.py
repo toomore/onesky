@@ -23,25 +23,32 @@ class Onesky(object):
                 'dev_hash': dev_hash.hexdigest()
                }
 
-    def api_get(self, api_path, params=None):
-        if not params and isinstance(params, dict):
+    def api_get(self, path, params=None):
+        if params and isinstance(params, dict):
             params.update(self.render_auth())
         else:
             params = self.render_auth()
 
-        result = requests.get(urljoin(self.api_path, api_path), params=params)
-        return result.json()
+        return requests.get(urljoin(self.api_path, path), params=params)
+
+    def api_post(self, path, params=None, files=None):
+        if params and isinstance(params, dict):
+            params.update(self.render_auth())
+        else:
+            params = self.render_auth()
+
+        return requests.post(urljoin(self.api_path, path), params=params,
+                files=files)
 
     def upload_po(self, project_id, file):
-        params = render_auth()
-        params['file_format'] = 'GNU_PO'
-        r = requests.post(urljoin(self.api_path, 'projects/%s/files' % project_id),
-                params=params, files={'file': file})
-        return r.json()
+        params = {'file_format': 'GNU_PO'}
+        result = self.api_post('projects/%s/files' % project_id, params=params,
+                files={'file': file})
+        return result.json()
 
 if __name__ == '__main__':
     onesky = Onesky(setting.API_KEY, setting.API_SECRET)
-    pprint(onesky.api_get('project-groups'))
-    pprint(onesky.api_get('project-groups/%s/projects' % setting.PROJECT_GROUP_ID))
+    pprint(onesky.api_get('project-groups').json())
+    pprint(onesky.api_get('project-groups/%s/projects' % setting.PROJECT_GROUP_ID).json())
     #with open(setting.PO_FILES, 'rb') as pof:
-    #    pprint(upload_po(setting.PROJECT_ID, pof))
+    #    pprint(onesky.upload_po(setting.PROJECT_ID, pof))
