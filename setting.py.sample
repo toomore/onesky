@@ -1,0 +1,7 @@
+# -*- coding: utf-8 -*-
+
+API_KEY = ''
+API_SECRET = ''
+PROJECT_GROUP_ID = ''
+PROJECT_ID= ''
+PO_FILES = ''
