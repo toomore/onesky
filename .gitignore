@@ -1,6 +1,4 @@
 *.po
 *.pyc
-*_test.go
 setting.py
-test.py
 venv/
