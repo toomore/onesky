@@ -46,9 +46,24 @@ class Onesky(object):
                 files={'file': file})
         return result.json()
 
+    def download_po(self, project_id, locale, source_file_name, export_file_name=None):
+        params = {'locale': locale,
+                  'source_file_name': source_file_name}
+
+        if export_file_name:
+            params.update(export_file_name=export_file_name)
+
+        result = self.api_get('projects/%s/translations' % project_id, params=params)
+        if result.status_code == '200':
+            with open('./%s_%s' % (locale, source_file_name), 'w') as pof:
+                pof.write(result.content)
+
+        return result.status_code
+
 if __name__ == '__main__':
     onesky = Onesky(setting.API_KEY, setting.API_SECRET)
     pprint(onesky.api_get('project-groups').json())
     pprint(onesky.api_get('project-groups/%s/projects' % setting.PROJECT_GROUP_ID).json())
     #with open(setting.PO_FILES, 'rb') as pof:
     #    pprint(onesky.upload_po(setting.PROJECT_ID, pof))
+    print onesky.download_po(setting.PROJECT_ID, 'zh-Hant-TW', '...')
