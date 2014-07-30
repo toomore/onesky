@@ -40,8 +40,8 @@ class Onesky(object):
         return requests.post(urljoin(self.api_path, path), params=params,
                 files=files)
 
-    def upload_po(self, project_id, file):
-        params = {'file_format': 'GNU_PO'}
+    def upload_po(self, project_id, file, file_format='GNU_PO'):
+        params = {'file_format': file_format}
         result = self.api_post('projects/%s/files' % project_id, params=params,
                 files={'file': file})
         return result.json()
