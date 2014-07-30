@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import requests
-import setting
 import time
-from pprint import pprint
 from urlparse import urljoin
+
 
 class Onesky(object):
     def __init__(self, api_key, api_secret):
@@ -63,6 +62,8 @@ class Onesky(object):
         return result.status_code
 
 if __name__ == '__main__':
+    import setting
+    from pprint import pprint
     onesky = Onesky(setting.API_KEY, setting.API_SECRET)
     pprint(onesky.api_get('project-groups').json())
     pprint(onesky.api_get('project-groups/%s/projects' % setting.PROJECT_GROUP_ID).json())
