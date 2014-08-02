@@ -65,6 +65,11 @@ class Onesky(object):
         result = self.api_get('projects/%s/languages' % project_id)
         return result.json()
 
+    def pretty_project_info(self, project_id):
+        data = self.project_info(project_id)['data']
+        for lang in data:
+            print '%(code)s\t%(translation_progress)s' % lang
+
 if __name__ == '__main__':
     import setting
     from pprint import pprint
@@ -74,4 +79,5 @@ if __name__ == '__main__':
     #with open(setting.PO_FILES, 'rb') as pof:
     #    pprint(onesky.upload(setting.PROJECT_ID, pof))
     #print onesky.download(setting.PROJECT_ID, 'zh-Hant-TW', '...')
-    pprint(onesky.project_info(setting.PROJECT_ID))
+    #result = onesky.project_info(setting.PROJECT_ID)
+    onesky.pretty_project_info(setting.PROJECT_ID)
