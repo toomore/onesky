@@ -70,7 +70,7 @@ class Onesky(object):
     def pretty_project_info(self, project_id):
         data = self.project_info(project_id)['data']
         for lang in data:
-            print '%(code)s\t%(translation_progress)s' % lang
+            print ' - %(code)s\t%(translation_progress)s' % lang
 
 if __name__ == '__main__':
     import setting
