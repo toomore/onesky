@@ -39,10 +39,14 @@ class Onesky(object):
         return requests.post(urljoin(self.api_path, path), params=params,
                 files=files)
 
-    def upload(self, project_id, file, file_format='GNU_PO',
+    def upload(self, project_id, file, file_format='GNU_PO', locale=None,
             is_keeping_all_strings=True):
         params = {'file_format': file_format,
                   'is_keeping_all_strings': is_keeping_all_strings}
+
+        if locale:
+            params.update({'locale': locale})
+
         result = self.api_post('projects/%s/files' % project_id, params=params,
                 files={'file': file})
         return result.json()
@@ -83,3 +87,6 @@ if __name__ == '__main__':
     #print onesky.download(setting.PROJECT_ID, 'zh-Hant-TW', '...')
     #result = onesky.project_info(setting.PROJECT_ID)
     onesky.pretty_project_info(setting.PROJECT_ID)
+
+    with open(setting.PO_FILES, 'rb') as pof:
+        pprint(onesky.upload(setting.PROJECT_ID, pof, locale='zh_CN'))
