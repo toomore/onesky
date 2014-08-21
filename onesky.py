@@ -51,7 +51,8 @@ class Onesky(object):
                 files={'file': file})
         return result.json()
 
-    def download(self, project_id, locale, source_file_name, export_file_name=None):
+    def download(self, project_id, locale, source_file_name,
+            export_file_name=None):
         save_filename = source_file_name
         params = {'locale': locale,
                   'source_file_name': source_file_name}
@@ -60,7 +61,8 @@ class Onesky(object):
             params.update(export_file_name=export_file_name)
             save_filename = export_file_name
 
-        result = self.api_get('projects/%s/translations' % project_id, params=params)
+        result = self.api_get('projects/%s/translations' % project_id,
+                params=params)
         if result.status_code == 200:
             with open('./%s_%s' % (locale, save_filename), 'w') as pof:
                 pof.write(result.content)
