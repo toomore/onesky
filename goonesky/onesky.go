@@ -6,10 +6,25 @@ import (
 	"time"
 )
 
-func renderAuth() string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%s", time.Now().Unix(), key))))
+type AuthData struct {
+	ApiKey    string
+	Timestamp string
+	Hashkey   string
+}
+
+func renderAuth(now time.Time) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%s", now.Unix(), APIKEY))))
+}
+
+func RenderAuth() *AuthData {
+	now := time.Now()
+	return &AuthData{
+		ApiKey:    APIKEY,
+		Timestamp: fmt.Sprint(now.Unix()),
+		Hashkey:   renderAuth(now),
+	}
 }
 
 func main() {
-	fmt.Println(renderAuth())
+	fmt.Println(RenderAuth())
 }
