@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
+	"net/http"
+	"path"
 	"time"
 )
 
@@ -25,6 +27,19 @@ func RenderAuth() *AuthData {
 	}
 }
 
+type OneskyAPI struct{}
+
+var basepath string = path.Base(APIPATH)
+
+func (o OneskyAPI) GetProjectInfo() {
+	urlPath := path.Join(basepath, "projects", PROJECTID, "languages")
+	resp, _ := http.Get(urlPath)
+	fmt.Println(resp.Body)
+	defer resp.Body.Close()
+}
+
 func main() {
-	fmt.Println(RenderAuth())
+	data := RenderAuth()
+	fmt.Println(data)
+	//fmt.Println(url.Values{)
 }
