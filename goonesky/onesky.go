@@ -29,17 +29,18 @@ func RenderAuth() *AuthData {
 
 type OneskyAPI struct{}
 
-var basepath string = path.Base(APIPATH)
+//var basepath string = path.Base(APIPATH)
 
-func (o OneskyAPI) GetProjectInfo() {
-	urlPath := path.Join(basepath, "projects", PROJECTID, "languages")
-	resp, _ := http.Get(urlPath)
-	fmt.Println(resp.Body)
-	defer resp.Body.Close()
+func (o OneskyAPI) GetProjectInfo(params *AuthData) {
+	urlPath := fmt.Sprintf("%s%s", APIPATH, path.Join("projects", PROJECTID, "languages"))
+	resp, err := http.Get(urlPath)
+	fmt.Println(resp, err)
+	//defer resp.Body.Close()
 }
 
 func main() {
 	data := RenderAuth()
 	fmt.Println(data)
-	//fmt.Println(url.Values{)
+	o := OneskyAPI{}
+	o.GetProjectInfo(data)
 }
