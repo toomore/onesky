@@ -4,26 +4,28 @@ import (
 	"crypto/md5"
 	"fmt"
 	"net/http"
+	"net/url"
 	"path"
+	"reflect"
 	"time"
 )
 
 type AuthData struct {
-	ApiKey    string
-	Timestamp string
-	Hashkey   string
+	ApiKey    string `json:"api_key"`
+	Timestamp string `json:"timestamp"`
+	Hashkey   string `json:"dev_hash"`
 }
 
-func renderAuth(now time.Time) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%s", now.Unix(), APIKEY))))
+func renderAuth(timestamp string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%s", timestamp, APISECRET))))
 }
 
 func RenderAuth() *AuthData {
-	now := time.Now()
+	timestamp := fmt.Sprint(time.Now().Unix())
 	return &AuthData{
 		ApiKey:    APIKEY,
-		Timestamp: fmt.Sprint(now.Unix()),
-		Hashkey:   renderAuth(now),
+		Timestamp: timestamp,
+		Hashkey:   renderAuth(timestamp),
 	}
 }
 
@@ -32,7 +34,14 @@ type OneskyAPI struct{}
 //var basepath string = path.Base(APIPATH)
 
 func (o OneskyAPI) GetProjectInfo(params *AuthData) {
-	urlPath := fmt.Sprintf("%s%s", APIPATH, path.Join("projects", PROJECTID, "languages"))
+	urlParams := url.Values{}
+	p := reflect.ValueOf(params).Elem()
+	for i := 0; i < p.NumField(); i++ {
+		f := p.Field(i)
+		tagName := p.Type().Field(i).Tag.Get("json")
+		urlParams.Add(tagName, fmt.Sprint(f))
+	}
+	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
 	resp, err := http.Get(urlPath)
 	fmt.Println(resp, err)
 	//defer resp.Body.Close()
