@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -42,9 +43,11 @@ func (o OneskyAPI) GetProjectInfo(params *AuthData) {
 		urlParams.Add(tagName, fmt.Sprint(f))
 	}
 	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
-	resp, err := http.Get(urlPath)
-	fmt.Println(resp, err)
-	//defer resp.Body.Close()
+	resp, _ := http.Get(urlPath)
+	if content, err := ioutil.ReadAll(resp.Body); err == nil {
+		fmt.Printf("%s", content)
+	}
+	defer resp.Body.Close()
 }
 
 func main() {
