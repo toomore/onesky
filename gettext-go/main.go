@@ -12,5 +12,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%v", pofile)
+	for i, v := range pofile.Messages {
+		fmt.Println(i, v.MsgId)
+	}
+	fmt.Println(pofile.MimeHeader)
+	n := &po.Message{
+		MsgId:  "Toomore",
+		MsgStr: "MsgToomore",
+	}
+	pofile.Messages = append(pofile.Messages, *n)
+	for i, v := range pofile.Messages {
+		fmt.Println(i, v.MsgId, v.MsgStr)
+	}
+	pofile.Save("test_result.po")
 }
