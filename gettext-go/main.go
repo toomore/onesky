@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"code.google.com/p/gettext-go/gettext/po"
+	//"code.google.com/p/gettext-go/gettext/po"
+	"github.com/toomore/gettext-go/gettext/po"
 )
 
 func main() {
