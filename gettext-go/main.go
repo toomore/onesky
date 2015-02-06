@@ -8,7 +8,7 @@ import (
 	"github.com/toomore/gettext-go/gettext/po"
 )
 
-func main() {
+func copyAndAdd() {
 	pofile, err := po.Load("test.po")
 	if err != nil {
 		log.Fatal(err)
@@ -26,4 +26,8 @@ func main() {
 		fmt.Println(i, v.MsgId, v.MsgStr)
 	}
 	pofile.Save("test_result.po")
+}
+
+func main() {
+	copyAndAdd()
 }
