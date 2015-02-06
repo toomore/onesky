@@ -40,6 +40,8 @@ func main() {
 		ProjectIdVersion: "Toomore",
 	}
 	pofile.MimeHeader = header
+	pofile.Messages = append(pofile.Messages, po.Message{
+		MsgId: "Toomore", MsgStr: "MsgToomore"})
 	fmt.Println(header)
 	pofile.Save("test2_result.po")
 }
