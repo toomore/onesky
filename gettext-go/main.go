@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	//"code.google.com/p/gettext-go/gettext/po"
 	"github.com/toomore/gettext-go/gettext/po"
@@ -29,5 +30,16 @@ func copyAndAdd() {
 }
 
 func main() {
-	copyAndAdd()
+	filename := "test2.po"
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		f, _ := os.Create(filename)
+		f.Close()
+	}
+	pofile, _ := po.Load(filename)
+	header := po.Header{
+		ProjectIdVersion: "Toomore",
+	}
+	pofile.MimeHeader = header
+	fmt.Println(header)
+	pofile.Save("test2_result.po")
 }
