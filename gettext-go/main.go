@@ -5,17 +5,20 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 
 	//"code.google.com/p/gettext-go/gettext/po"
 	"github.com/toomore/gettext-go/gettext/po"
 )
 
-func createPO(filename string, csvdata [][]string, rownum int) {
+func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	var lang = csvdata[0][rownum]
-	var filepath = fmt.Sprintf("%s/%s", lang, filename)
+	var filepath = fmt.Sprintf("%s/%s/%s", basedir, lang, filename)
 
-	os.Mkdir(fmt.Sprintf("./%s", lang), 0776)
+	os.MkdirAll(fmt.Sprintf("%s/%s", basedir, lang), 0776)
 
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		f, _ := os.Create(filepath)
@@ -46,11 +49,12 @@ func readCSV(filename string) ([][]string, error) {
 }
 
 func csvtopo(filename string) {
+	filename = filepath.Base(filename)
 	csvdata, _ := readCSV(filename)
 	orgfilename := strings.Split(filename, ".")
 
 	for i, _ := range csvdata[0] {
-		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i)
+		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i, strconv.FormatInt(time.Now().Unix(), 10))
 	}
 }
 
