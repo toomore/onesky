@@ -49,6 +49,28 @@ func createWithHeader(filename string) {
 	pofile.Save(fmt.Sprintf("%s_result.%s", orgfilename[0], orgfilename[1]))
 }
 
+func createPO(filename string, csvdata [][]string, rownum int) {
+	var lang = csvdata[0][rownum]
+
+	os.Mkdir(fmt.Sprintf("./%s", lang), 0776)
+
+	if _, err := os.Stat(fmt.Sprintf("%s/%s", lang, filename)); os.IsNotExist(err) {
+		f, _ := os.Create(fmt.Sprintf("%s/%s", lang, filename))
+		f.Close()
+	}
+	pofile, _ := po.Load(fmt.Sprintf("%s/%s", lang, filename))
+	header := po.Header{
+		ProjectIdVersion: "Toomore",
+	}
+	pofile.MimeHeader = header
+	//pofile.Messages = append(pofile.Messages, po.Message{
+	//	MsgId: "Toomore", MsgStr: "MsgToomore"})
+
+	//fmt.Println(header)
+	//orgfilename := strings.Split(filename, ".")
+	pofile.Save(fmt.Sprintf("%s/%s", lang, filename))
+}
+
 func readCSV(filename string) ([][]string, error) {
 	csvfile, _ := os.Open(filename)
 	defer csvfile.Close()
@@ -58,6 +80,10 @@ func readCSV(filename string) ([][]string, error) {
 
 func loopCSV(filename string) {
 	csvdata, _ := readCSV(filename)
+	//orgfilename := strings.Split(filename, ".")
+
+	// gen pot(base: zh_TW).
+
 	for i, langs := range csvdata[0] {
 		fmt.Printf("%d [%s]\n", i, langs)
 		for ri, value := range csvdata {
@@ -68,5 +94,7 @@ func loopCSV(filename string) {
 
 func main() {
 	//createWithHeader("test2.po")
-	loopCSV("onesky.csv")
+	//loopCSV("onesky.csv")
+	csvdata, _ := readCSV("onesky.csv")
+	createPO("onesky.po", csvdata, 0)
 }
