@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
@@ -48,6 +49,24 @@ func createWithHeader(filename string) {
 	pofile.Save(fmt.Sprintf("%s_result.%s", orgfilename[0], orgfilename[1]))
 }
 
+func readCSV(filename string) ([][]string, error) {
+	csvfile, _ := os.Open(filename)
+	defer csvfile.Close()
+	reader := csv.NewReader(csvfile)
+	return reader.ReadAll()
+}
+
+func loopCSV(filename string) {
+	csvdata, _ := readCSV(filename)
+	for i, langs := range csvdata[0] {
+		fmt.Printf("%d [%s]\n", i, langs)
+		for ri, value := range csvdata {
+			fmt.Println(ri, value[0], "//", value[i])
+		}
+	}
+}
+
 func main() {
-	createWithHeader("test2.po")
+	//createWithHeader("test2.po")
+	loopCSV("onesky.csv")
 }
