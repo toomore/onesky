@@ -83,23 +83,18 @@ func readCSV(filename string) ([][]string, error) {
 	return reader.ReadAll()
 }
 
-func loopCSV(filename string) {
+func csvtopo(filename string) {
 	csvdata, _ := readCSV(filename)
-	//orgfilename := strings.Split(filename, ".")
+	orgfilename := strings.Split(filename, ".")
 
-	// gen pot(base: zh_TW).
-
-	for i, langs := range csvdata[0] {
-		fmt.Printf("%d [%s]\n", i, langs)
-		for ri, value := range csvdata {
-			fmt.Println(ri, value[0], "//", value[i])
-		}
+	for i, _ := range csvdata[0] {
+		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i)
 	}
 }
 
 func main() {
 	//createWithHeader("test2.po")
-	//loopCSV("onesky.csv")
-	csvdata, _ := readCSV("onesky.csv")
-	createPO("onesky.po", csvdata, 0)
+	csvtopo("onesky.csv")
+	//csvdata, _ := readCSV("onesky.csv")
+	//createPO("onesky.po", csvdata, 0)
 }
