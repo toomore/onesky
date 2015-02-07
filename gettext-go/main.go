@@ -57,6 +57,7 @@ func createPO(filename string, csvdata [][]string, rownum int) {
 
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		f, _ := os.Create(filepath)
+		f.Chmod(0776)
 		f.Close()
 	}
 	pofile, _ := po.Load(filepath)
@@ -64,8 +65,13 @@ func createPO(filename string, csvdata [][]string, rownum int) {
 		ProjectIdVersion: "Toomore",
 	}
 	pofile.MimeHeader = header
-	//pofile.Messages = append(pofile.Messages, po.Message{
-	//	MsgId: "Toomore", MsgStr: "MsgToomore"})
+	for _, v := range csvdata[1:] {
+		pofile.Messages = append(pofile.Messages,
+			po.Message{
+				MsgId:  v[0],
+				MsgStr: v[rownum],
+			})
+	}
 
 	pofile.Save(filepath)
 }
