@@ -51,14 +51,15 @@ func createWithHeader(filename string) {
 
 func createPO(filename string, csvdata [][]string, rownum int) {
 	var lang = csvdata[0][rownum]
+	var filepath = fmt.Sprintf("%s/%s", lang, filename)
 
 	os.Mkdir(fmt.Sprintf("./%s", lang), 0776)
 
-	if _, err := os.Stat(fmt.Sprintf("%s/%s", lang, filename)); os.IsNotExist(err) {
-		f, _ := os.Create(fmt.Sprintf("%s/%s", lang, filename))
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		f, _ := os.Create(filepath)
 		f.Close()
 	}
-	pofile, _ := po.Load(fmt.Sprintf("%s/%s", lang, filename))
+	pofile, _ := po.Load(filepath)
 	header := po.Header{
 		ProjectIdVersion: "Toomore",
 	}
@@ -66,9 +67,7 @@ func createPO(filename string, csvdata [][]string, rownum int) {
 	//pofile.Messages = append(pofile.Messages, po.Message{
 	//	MsgId: "Toomore", MsgStr: "MsgToomore"})
 
-	//fmt.Println(header)
-	//orgfilename := strings.Split(filename, ".")
-	pofile.Save(fmt.Sprintf("%s/%s", lang, filename))
+	pofile.Save(filepath)
 }
 
 func readCSV(filename string) ([][]string, error) {
