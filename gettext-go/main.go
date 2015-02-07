@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -21,11 +22,17 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	os.MkdirAll(filepath.Join(basedir, lang), 0776)
 
 	if _, err := os.Stat(popath); os.IsNotExist(err) {
-		f, _ := os.Create(popath)
+		f, err := os.Create(popath)
+		if err != nil {
+			log.Fatal(err)
+		}
 		f.Chmod(0776)
 		f.Close()
 	}
-	pofile, _ := po.Load(popath)
+	pofile, err := po.Load(popath)
+	if err != nil {
+		log.Fatal(err)
+	}
 	header := po.Header{
 		ProjectIdVersion: "Toomore",
 	}
@@ -42,7 +49,10 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 }
 
 func readCSV(filename string) ([][]string, error) {
-	csvfile, _ := os.Open(filename)
+	csvfile, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer csvfile.Close()
 	reader := csv.NewReader(csvfile)
 	return reader.ReadAll()
@@ -50,7 +60,11 @@ func readCSV(filename string) ([][]string, error) {
 
 func csvtopo(filename, outputdir string) {
 	filename = filepath.Base(filename)
-	csvdata, _ := readCSV(filename)
+	csvdata, err := readCSV(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	orgfilename := strings.Split(filename, ".")
 
 	for i := range csvdata[0] {
