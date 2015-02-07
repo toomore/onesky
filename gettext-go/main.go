@@ -15,11 +15,14 @@ import (
 	"github.com/toomore/gettext-go/gettext/po"
 )
 
-func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
-	var lang = csvdata[0][rownum]
-	var popath = filepath.Join(basedir, lang, filename)
+var poherder = &po.Header{
+	ProjectIdVersion: "Toomore",
+}
 
-	os.MkdirAll(filepath.Join(basedir, lang), 0776)
+func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
+	var popath = filepath.Join(basedir, csvdata[0][rownum], filename)
+
+	os.MkdirAll(filepath.Join(basedir, csvdata[0][rownum]), 0776)
 
 	if _, err := os.Stat(popath); os.IsNotExist(err) {
 		f, err := os.Create(popath)
@@ -33,10 +36,8 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	header := po.Header{
-		ProjectIdVersion: "Toomore",
-	}
-	pofile.MimeHeader = header
+	pofile.MimeHeader = *poherder
+
 	for _, v := range csvdata[1:] {
 		pofile.Messages = append(pofile.Messages,
 			po.Message{
@@ -44,7 +45,6 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 				MsgStr: v[rownum],
 			})
 	}
-
 	pofile.Save(popath)
 }
 
