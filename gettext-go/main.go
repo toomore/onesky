@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -53,8 +54,15 @@ func csvtopo(filename string) {
 	}
 }
 
+var csvpath = flag.String("csvpath", "", "The paht of csv file.")
+
 func main() {
-	csvtopo("onesky.csv")
+	flag.Parse()
+	if *csvpath == "" {
+		flag.PrintDefaults()
+		return
+	}
+	csvtopo(*csvpath)
 	//csvdata, _ := readCSV("onesky.csv")
 	//createPO("onesky.po", csvdata, 0)
 }
