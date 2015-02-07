@@ -48,17 +48,18 @@ func readCSV(filename string) ([][]string, error) {
 	return reader.ReadAll()
 }
 
-func csvtopo(filename string) {
+func csvtopo(filename, outputdir string) {
 	filename = filepath.Base(filename)
 	csvdata, _ := readCSV(filename)
 	orgfilename := strings.Split(filename, ".")
 
 	for i, _ := range csvdata[0] {
-		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i, strconv.FormatInt(time.Now().Unix(), 10))
+		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i, outputdir)
 	}
 }
 
-var csvpath = flag.String("csvpath", "", "The paht of csv file.")
+var csvpath = flag.String("csv", "", "The paht of csv file.")
+var outputdir = flag.String("out", "", "The paht of output po dir.")
 
 func main() {
 	flag.Parse()
@@ -66,7 +67,11 @@ func main() {
 		flag.PrintDefaults()
 		return
 	}
-	csvtopo(*csvpath)
+
+	if *outputdir == "" {
+		*outputdir = strconv.FormatInt(time.Now().Unix(), 10)
+	}
+	csvtopo(*csvpath, *outputdir)
 	//csvdata, _ := readCSV("onesky.csv")
 	//createPO("onesky.po", csvdata, 0)
 }
