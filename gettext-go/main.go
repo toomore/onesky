@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	//"code.google.com/p/gettext-go/gettext/po"
 	"github.com/toomore/gettext-go/gettext/po"
@@ -29,8 +30,7 @@ func copyAndAdd() {
 	pofile.Save("test_result.po")
 }
 
-func main() {
-	filename := "test2.po"
+func createWithHeader(filename string) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		f, _ := os.Create(filename)
 		f.Close()
@@ -42,6 +42,12 @@ func main() {
 	pofile.MimeHeader = header
 	pofile.Messages = append(pofile.Messages, po.Message{
 		MsgId: "Toomore", MsgStr: "MsgToomore"})
+
 	fmt.Println(header)
-	pofile.Save("test2_result.po")
+	orgfilename := strings.Split(filename, ".")
+	pofile.Save(fmt.Sprintf("%s_result.%s", orgfilename[0], orgfilename[1]))
+}
+
+func main() {
+	createWithHeader("test2.po")
 }
