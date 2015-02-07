@@ -53,7 +53,7 @@ func csvtopo(filename, outputdir string) {
 	csvdata, _ := readCSV(filename)
 	orgfilename := strings.Split(filename, ".")
 
-	for i, _ := range csvdata[0] {
+	for i := range csvdata[0] {
 		createPO(fmt.Sprintf("%s.po", orgfilename[0]), csvdata, i, outputdir)
 	}
 }
