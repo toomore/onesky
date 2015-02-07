@@ -16,16 +16,16 @@ import (
 
 func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	var lang = csvdata[0][rownum]
-	var filepath = fmt.Sprintf("%s/%s/%s", basedir, lang, filename)
+	var popath = filepath.Join(basedir, lang, filename)
 
-	os.MkdirAll(fmt.Sprintf("%s/%s", basedir, lang), 0776)
+	os.MkdirAll(filepath.Join(basedir, lang), 0776)
 
-	if _, err := os.Stat(filepath); os.IsNotExist(err) {
-		f, _ := os.Create(filepath)
+	if _, err := os.Stat(popath); os.IsNotExist(err) {
+		f, _ := os.Create(popath)
 		f.Chmod(0776)
 		f.Close()
 	}
-	pofile, _ := po.Load(filepath)
+	pofile, _ := po.Load(popath)
 	header := po.Header{
 		ProjectIdVersion: "Toomore",
 	}
@@ -38,7 +38,7 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 			})
 	}
 
-	pofile.Save(filepath)
+	pofile.Save(popath)
 }
 
 func readCSV(filename string) ([][]string, error) {
