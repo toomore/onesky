@@ -30,18 +30,23 @@ func RenderAuth() *AuthData {
 	}
 }
 
-type OneskyAPI struct{}
-
-//var basepath string = path.Base(APIPATH)
-
-func (o OneskyAPI) GetProjectInfo(params *AuthData) {
+func (auth AuthData) ToURLValue() url.Values {
 	urlParams := url.Values{}
-	p := reflect.ValueOf(params).Elem()
+	p := reflect.ValueOf(auth)
 	for i := 0; i < p.NumField(); i++ {
 		f := p.Field(i)
 		tagName := p.Type().Field(i).Tag.Get("json")
 		urlParams.Add(tagName, fmt.Sprint(f))
 	}
+	return urlParams
+}
+
+type OneskyAPI struct{}
+
+//var basepath string = path.Base(APIPATH)
+
+func (o OneskyAPI) GetProjectInfo(params *AuthData) {
+	urlParams := params.ToURLValue()
 	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
 	resp, _ := http.Get(urlPath)
 	if content, err := ioutil.ReadAll(resp.Body); err == nil {
