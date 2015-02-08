@@ -45,9 +45,7 @@ type OneskyAPI struct{}
 
 //var basepath string = path.Base(APIPATH)
 
-func (o OneskyAPI) GetProjectInfo(params *AuthData) {
-	urlParams := params.ToURLValue()
-	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
+func (o OneskyAPI) httpGet(urlPath string) {
 	resp, _ := http.Get(urlPath)
 	if content, err := ioutil.ReadAll(resp.Body); err == nil {
 		fmt.Printf("%s", content)
@@ -55,14 +53,16 @@ func (o OneskyAPI) GetProjectInfo(params *AuthData) {
 	defer resp.Body.Close()
 }
 
+func (o OneskyAPI) GetProjectInfo(params *AuthData) {
+	urlParams := params.ToURLValue()
+	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
+	o.httpGet(urlPath)
+}
+
 func (o OneskyAPI) GetFilesList(params *AuthData) {
 	urlParams := params.ToURLValue()
 	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "files"), urlParams.Encode())
-	resp, _ := http.Get(urlPath)
-	if content, err := ioutil.ReadAll(resp.Body); err == nil {
-		fmt.Printf("%s", content)
-	}
-	defer resp.Body.Close()
+	o.httpGet(urlPath)
 }
 
 func main() {
