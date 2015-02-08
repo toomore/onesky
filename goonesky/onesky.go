@@ -55,9 +55,20 @@ func (o OneskyAPI) GetProjectInfo(params *AuthData) {
 	defer resp.Body.Close()
 }
 
+func (o OneskyAPI) GetFilesList(params *AuthData) {
+	urlParams := params.ToURLValue()
+	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "files"), urlParams.Encode())
+	resp, _ := http.Get(urlPath)
+	if content, err := ioutil.ReadAll(resp.Body); err == nil {
+		fmt.Printf("%s", content)
+	}
+	defer resp.Body.Close()
+}
+
 func main() {
 	data := RenderAuth()
 	fmt.Println(data)
 	o := OneskyAPI{}
 	o.GetProjectInfo(data)
+	o.GetFilesList(data)
 }
