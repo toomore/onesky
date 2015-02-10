@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"reflect"
 	"time"
@@ -65,33 +66,36 @@ func (o OneskyAPI) httpPostForm(urlPath string, data url.Values) {
 	defer resp.Body.Close()
 }
 
-func (o OneskyAPI) httpPostData(urlPath string, data []byte) {
+func (o OneskyAPI) httpPostData(urlPath string, data *os.File) {
 	//resp, _ := http.Post(urlPath, "multipart/form-data", strings.NewReader(data.Encode()))
 	var b bytes.Buffer
 	w := multipart.NewWriter(&b)
-	fw, err := w.CreateFormFile("file", "onesky.po")
+	fw, err := w.CreateFormFile("file", data.Name())
 	if err != nil {
 		log.Fatal(err)
 	}
-	if _, err = io.Copy(fw, bytes.NewReader(data)); err != nil {
+	if _, err = io.Copy(fw, data); err != nil {
 		return
 	}
 	w.Close()
 
-	fmt.Println(b.String())
 	resp, _ := http.Post(urlPath, w.FormDataContentType(), bytes.NewReader(b.Bytes()))
 	fmt.Println(resp.Request.URL)
 	if content, err := ioutil.ReadAll(resp.Body); err == nil {
-		fmt.Printf("[%s]", content)
+		fmt.Printf("%s", content)
 	}
 	defer resp.Body.Close()
 }
 
-func (o OneskyAPI) UploadPO(params *AuthData, bytedata []byte) {
+func (o OneskyAPI) UploadPO(params *AuthData, filename string) {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("`%s` not find.", filename)
+	}
 	urlParams := params.ToURLValue()
 	urlParams.Add("file_format", "GNU_PO")
 	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "files"), urlParams.Encode())
-	o.httpPostData(urlPath, bytedata)
+	o.httpPostData(urlPath, file)
 }
 
 func (o OneskyAPI) GetProjectInfo(params *AuthData) {
@@ -113,6 +117,5 @@ func main() {
 	//o.GetProjectInfo(data)
 	//o.GetFilesList(data)
 
-	pofile, _ := ioutil.ReadFile("onesky.po")
-	o.UploadPO(data, pofile)
+	o.UploadPO(data, "onesky.po")
 }
