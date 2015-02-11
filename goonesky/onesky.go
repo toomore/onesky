@@ -114,11 +114,11 @@ func (o OneskyAPI) GetFilesList(params *AuthData) {
 }
 
 func main() {
-	data := RenderAuth()
-	fmt.Println(data)
+	auth := RenderAuth()
+	fmt.Println(auth)
 	o := OneskyAPI{}
-	//o.GetProjectInfo(data)
-	//o.GetFilesList(data)
+	//o.GetProjectInfo(auth)
+	//o.GetFilesList(auth)
 
-	o.UploadPO(data, "onesky.po", "test.po")
+	o.UploadPO(auth, "onesky.po", "test.po")
 }
