@@ -87,10 +87,14 @@ func (o OneskyAPI) httpPostData(urlPath string, data *os.File) {
 	defer resp.Body.Close()
 }
 
-func (o OneskyAPI) UploadPO(params *AuthData, filename string) {
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("`%s` not find.", filename)
+func (o OneskyAPI) UploadPO(params *AuthData, files ...string) {
+	filesOpened := make([]*os.File, len(files))
+	for i, filename := range files {
+		file, err := os.Open(filename)
+		if err != nil {
+			log.Fatalf("`%s` not find.", filename)
+		}
+		filesOpened[i] = file
 	}
 	urlParams := params.ToURLValue()
 	urlParams.Add("file_format", "GNU_PO")
@@ -117,5 +121,5 @@ func main() {
 	//o.GetProjectInfo(data)
 	//o.GetFilesList(data)
 
-	o.UploadPO(data, "onesky.po")
+	o.UploadPO(data, "onesky.po", "test.po")
 }
