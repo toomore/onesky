@@ -90,28 +90,28 @@ func (o OneskyAPI) httpPostData(urlPath string, data *os.File) {
 func (o OneskyAPI) UploadPO(params *AuthData, files ...string) {
 	urlParams := params.ToURLValue()
 	urlParams.Add("file_format", "GNU_PO")
-	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "files"), urlParams.Encode())
+	basepath.Path = path.Join(APIVERSION, "projects", PROJECTID, "files")
+	basepath.RawQuery = urlParams.Encode()
 
 	for _, filename := range files {
 		file, err := os.Open(filename)
 		if err != nil {
 			log.Fatalf("`%s` not find.", filename)
 		}
-		o.httpPostData(urlPath, file)
+		o.httpPostData(basepath.String(), file)
 	}
 }
 
 func (o OneskyAPI) GetProjectInfo(params *AuthData) {
-	urlParams := params.ToURLValue()
 	basepath.Path = path.Join(APIVERSION, "projects", PROJECTID, "languages")
-	basepath.RawQuery = urlParams.Encode()
+	basepath.RawQuery = params.ToURLValue().Encode()
 	o.httpGet(basepath.String())
 }
 
 func (o OneskyAPI) GetFilesList(params *AuthData) {
-	urlParams := params.ToURLValue()
-	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "files"), urlParams.Encode())
-	o.httpGet(urlPath)
+	basepath.Path = path.Join(APIVERSION, "projects", PROJECTID, "files")
+	basepath.RawQuery = params.ToURLValue().Encode()
+	o.httpGet(basepath.String())
 }
 
 func main() {
@@ -119,7 +119,7 @@ func main() {
 	fmt.Println(auth)
 	o := OneskyAPI{}
 	o.GetProjectInfo(auth)
-	//o.GetFilesList(auth)
+	o.GetFilesList(auth)
 
-	//o.UploadPO(auth, "onesky.po", "test.po")
+	o.UploadPO(auth, "onesky.po", "test.po")
 }
