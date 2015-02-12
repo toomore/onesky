@@ -80,7 +80,6 @@ func (o OneskyAPI) httpPostData(urlPath string, data *os.File) {
 	w.Close()
 
 	resp, _ := http.Post(urlPath, w.FormDataContentType(), bytes.NewReader(b.Bytes()))
-	fmt.Println(resp.Request.URL)
 	if content, err := ioutil.ReadAll(resp.Body); err == nil {
 		fmt.Printf("%s", content)
 	}
