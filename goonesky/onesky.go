@@ -48,7 +48,7 @@ func (auth AuthData) ToURLValue() url.Values {
 
 type OneskyAPI struct{}
 
-//var basepath string = path.Base(APIPATH)
+var basepath, _ = url.Parse(APIPATH)
 
 func (o OneskyAPI) httpGet(urlPath string) {
 	resp, _ := http.Get(urlPath)
@@ -103,8 +103,9 @@ func (o OneskyAPI) UploadPO(params *AuthData, files ...string) {
 
 func (o OneskyAPI) GetProjectInfo(params *AuthData) {
 	urlParams := params.ToURLValue()
-	urlPath := fmt.Sprintf("%s%s?%s", APIPATH, path.Join("projects", PROJECTID, "languages"), urlParams.Encode())
-	o.httpGet(urlPath)
+	basepath.Path = path.Join(APIVERSION, "projects", PROJECTID, "languages")
+	basepath.RawQuery = urlParams.Encode()
+	o.httpGet(basepath.String())
 }
 
 func (o OneskyAPI) GetFilesList(params *AuthData) {
@@ -117,8 +118,8 @@ func main() {
 	auth := RenderAuth()
 	fmt.Println(auth)
 	o := OneskyAPI{}
-	//o.GetProjectInfo(auth)
+	o.GetProjectInfo(auth)
 	//o.GetFilesList(auth)
 
-	o.UploadPO(auth, "onesky.po", "test.po")
+	//o.UploadPO(auth, "onesky.po", "test.po")
 }
