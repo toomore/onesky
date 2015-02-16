@@ -13,6 +13,8 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"runtime"
+	"sync"
 	"time"
 )
 
@@ -92,13 +94,21 @@ func (o OneskyAPI) UploadPO(params *AuthData, files ...string) {
 	basepath.Path = path.Join(APIVERSION, "projects", PROJECTID, "files")
 	basepath.RawQuery = urlParams.Encode()
 
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	var wg sync.WaitGroup
+	wg.Add(len(files))
 	for _, filename := range files {
 		file, err := os.Open(filename)
 		if err != nil {
 			log.Fatalf("`%s` not find.", filename)
 		}
-		o.httpPostData(basepath.String(), file)
+		go func(path string, file *os.File) {
+			defer wg.Done()
+			runtime.Gosched()
+			o.httpPostData(path, file)
+		}(basepath.String(), file)
 	}
+	wg.Wait()
 }
 
 func (o OneskyAPI) GetProjectInfo(params *AuthData) {
@@ -117,8 +127,8 @@ func main() {
 	auth := RenderAuth()
 	fmt.Println(auth)
 	o := OneskyAPI{}
-	o.GetProjectInfo(auth)
-	o.GetFilesList(auth)
+	//o.GetProjectInfo(auth)
+	//o.GetFilesList(auth)
 
 	o.UploadPO(auth, "onesky.po", "test.po")
 }
