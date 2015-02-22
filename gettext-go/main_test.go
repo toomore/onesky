@@ -1,9 +1,17 @@
 package main
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestReadCSV(*testing.T) {
 	readCSV("onesky.csv")
+}
+func TestCreatePO(*testing.T) {
+	csvdata, _ := readCSV("onesky.csv")
+	createPO("onesky.po", csvdata, 0, "test_temp")
+	os.RemoveAll("./test_temp")
 }
 
 func BenchmarkReadCSV(b *testing.B) {
