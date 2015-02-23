@@ -14,6 +14,10 @@ func TestCreatePO(*testing.T) {
 	os.RemoveAll("./test_temp")
 }
 
+func TestCSVtopo(*testing.T) {
+	csvtopo("onesky.csv", "./test_temp")
+}
+
 func BenchmarkReadCSV(b *testing.B) {
 	for i := 0; i <= b.N; i++ {
 		readCSV("onesky.csv")
