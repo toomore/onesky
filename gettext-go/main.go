@@ -15,6 +15,8 @@ import (
 	"github.com/toomore/gettext-go/gettext/po"
 )
 
+const TIMELAYOUT = "2006-01-02 15:04-0700"
+
 var poherder = &po.Header{
 	ProjectIdVersion:        "PROJECTIDVERSION",
 	ContentType:             "text/plain; charset=UTF-8",
@@ -42,6 +44,8 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	}
 
 	poherder.Language = csvdata[0][rownum]
+	poherder.POTCreationDate = time.Now().Format(TIMELAYOUT)
+	poherder.PORevisionDate = time.Now().Format(TIMELAYOUT)
 	pofile.MimeHeader = *poherder
 
 	for _, v := range csvdata[1:] {
@@ -92,6 +96,7 @@ func main() {
 		*outputdir = strconv.FormatInt(time.Now().Unix(), 10)
 	}
 	csvtopo(*csvpath, *outputdir)
+
 	//csvdata, _ := readCSV("onesky.csv")
 	//createPO("onesky.po", csvdata, 0)
 }
