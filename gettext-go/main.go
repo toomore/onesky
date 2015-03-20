@@ -16,7 +16,11 @@ import (
 )
 
 var poherder = &po.Header{
-	ProjectIdVersion: "Toomore",
+	ProjectIdVersion:        "PROJECTIDVERSION",
+	ContentType:             "text/plain; charset=UTF-8",
+	ContentTransferEncoding: "8bit",
+	LanguageTeam:            "LANGUAGE-TEAM",
+	MimeVersion:             "1.0",
 }
 
 func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
@@ -36,6 +40,8 @@ func createPO(filename string, csvdata [][]string, rownum int, basedir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	poherder.Language = csvdata[0][rownum]
 	pofile.MimeHeader = *poherder
 
 	for _, v := range csvdata[1:] {
